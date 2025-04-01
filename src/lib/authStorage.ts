@@ -1,5 +1,5 @@
 import { TokenResponse } from "types/user";
-
+// TODO: use cookie
 export const logoutUtility = () => {
   window.localStorage.removeItem("accessToken");
   window.localStorage.removeItem("refreshToken");
