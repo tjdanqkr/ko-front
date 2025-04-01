@@ -1,10 +1,38 @@
 "use client";
 
+import { tokenRefresh } from "api/auth";
+import { loginUtility, logoutUtility } from "lib/authStorage";
+import { ONE_MINUTE } from "lib/time";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
+const silentRefresh = async () => {
+  const response = await tokenRefresh();
+  if (response) {
+    loginUtility(response);
+  }
+};
 const NavBar = () => {
   const pathname = usePathname();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsLoggedIn(!!window.localStorage.getItem("accessToken"));
+      const expiresIn = window.localStorage.getItem("expiresIn");
+      if (expiresIn && new Date(expiresIn).getTime() - 60 * ONE_MINUTE < new Date().getTime()) {
+        silentRefresh();
+      }
+    }
+  }, [pathname]);
+
+  const handleLogout = () => {
+    if (typeof window !== "undefined") {
+      logoutUtility();
+      setIsLoggedIn(false);
+    }
+  };
 
   return (
     <nav className="shadow-md">
@@ -26,9 +54,15 @@ const NavBar = () => {
             </div>
           </div>
           <div className="flex items-center">
-            <Link href="/login" className="flex items-center px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded hover:bg-blue-400 transition">
-              로그인
-            </Link>
+            {isLoggedIn ? (
+              <button onClick={handleLogout} className="flex items-center px-4 py-2 bg-red-500 text-white text-sm font-semibold rounded hover:bg-red-400 transition">
+                로그아웃
+              </button>
+            ) : (
+              <Link href="/login" className="flex items-center px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded hover:bg-blue-400 transition">
+                로그인
+              </Link>
+            )}
           </div>
         </div>
       </div>

@@ -13,3 +13,9 @@ export interface UserResponse extends User {
   id: number;
   createdAt: string;
 }
+export interface TokenResponse {
+  accessToken: string;
+  tokenType: string;
+  expiresIn: string;
+  refreshToken: string;
+}
