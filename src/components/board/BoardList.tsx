@@ -11,6 +11,7 @@ interface BoardListProps {
 }
 
 const BoardList = ({ initialData }: BoardListProps) => {
+  console.log("initialData", initialData);
   const [boards, setBoards] = useState<BoardResponse[]>(initialData.content);
   const [currentPage, setCurrentPage] = useState<number>(initialData.page.number);
   const [hasMore, setHasMore] = useState<boolean>(initialData.page.totalPages > initialData.page.number);

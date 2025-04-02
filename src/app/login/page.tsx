@@ -1,16 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { login } from "api/auth";
 import { TokenResponse, UserLoginRequest } from "types/user";
 import { loginUtility } from "lib/authStorage";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
+  const returnUrl = searchParams.get("returnUrl") || "/";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +26,8 @@ export default function LoginPage() {
         throw new Error("로그인에 실패했습니다.");
       }
       loginUtility(response);
-      router.push("/");
+
+      router.push(returnUrl);
     } catch (err: any) {
       setError(err.message || "로그인에 실패했습니다.");
     }

@@ -25,6 +25,7 @@ export default function SignupPage() {
       }
       router.push("/login");
     } catch (err: any) {
+      console.error(err);
       setError(err.message || "회원가입에 실패했습니다.");
     }
   };
